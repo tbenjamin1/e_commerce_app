@@ -1,4 +1,4 @@
-import 'package:e_commerce_app/home_screens/landing_page.dart';
+import 'package:e_commerce_app/home_screens/ProductListingScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -45,7 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
       
 
       Navigator.pushReplacement(context,
-          MaterialPageRoute(builder: (_) => LandingPage(currentUser: data['id'].toString() )));
+          MaterialPageRoute(builder: (_) => ProductListingScreen(currentUser: data['id'].toString() )));
     } else {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text('Invalid login credentials')));
