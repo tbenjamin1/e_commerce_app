@@ -1,8 +1,10 @@
-import 'package:e_commerce_app/auth_screens/LoginScreen.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'dart:async';
 
 class SplashScreen extends StatefulWidget {
+  const SplashScreen({Key? key}) : super(key: key);
+
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }
@@ -12,7 +14,9 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     Timer(Duration(seconds: 3), () {
-      // Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => LoginScreen()));
+      if (mounted) {
+        context.go('/login');
+      }
     });
   }
 
@@ -85,10 +89,7 @@ class _SplashScreenState extends State<SplashScreen> {
                   height: 55,
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (_) => LoginScreen()),
-                      );
+                      context.go('/login');
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color(0xFF2C2C2C),

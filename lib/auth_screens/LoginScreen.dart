@@ -2,7 +2,7 @@ import 'package:e_commerce_app/home_screens/ProductListingScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
+import 'package:go_router/go_router.dart';
 class LoginScreen extends StatefulWidget {
   @override
   _LoginScreenState createState() => _LoginScreenState();
@@ -43,9 +43,9 @@ class _LoginScreenState extends State<LoginScreen> {
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       
+      //  go router navigation
+      context.go('/home?currentUser=${data['id'].toString()}');
 
-      Navigator.pushReplacement(context,
-          MaterialPageRoute(builder: (_) => ProductListingScreen(currentUser: data['id'].toString() )));
     } else {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text('Invalid login credentials')));
