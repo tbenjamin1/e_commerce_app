@@ -199,28 +199,7 @@ flutter build ios --release
 ```
 
 
-## ⏱️ Development Timeline
-
-**Estimated Development Time: 16-20 hours**
-
-- **Day 1 (6-8 hours)**:
-  - Project setup and architecture planning
-  - API integration and models
-  - Login screen implementation
-
-- **Day 2 (6-8 hours)**:
-  - Product listing with lazy loading
-  - Product details screen
-  - Cart functionality implementation
-
-- **Day 3 (4 hours)**:
-  - Wishlist implementation
-  - UI polish and testing
-  - Documentation and deployment preparation
-
-
-
-## Contact
+## developer
 
 **Developer**: [tbenjamin1]
 - **Email**: [tbenpollyl@gmail.com]
