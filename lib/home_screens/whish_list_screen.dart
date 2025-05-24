@@ -1,10 +1,12 @@
-// screens/wishlist_screen.dart
+import 'package:e_commerce_app/constants/colors.dart';
 import 'package:e_commerce_app/layout/bottom_navigation_bar.dart';
+import 'package:e_commerce_app/models/product_model.dart';
 import 'package:e_commerce_app/providers/wishlist_provider.dart';
+import 'package:e_commerce_app/widgets/logout.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:e_commerce_app/providers/cart_item_provider.dart';
-import 'package:e_commerce_app/home_screens/product_details.dart';
 
 class WishlistScreen extends StatelessWidget {
   const WishlistScreen({Key? key}) : super(key: key);
@@ -27,39 +29,8 @@ class WishlistScreen extends StatelessWidget {
           ),
         ),
         actions: [
-          GestureDetector(
-            onTap: () => _showLogoutDialog(context),
-            child: Container(
-              margin: const EdgeInsets.only(right: 16),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: const BoxDecoration(
-                      color: Color(0xFFFFE8B2),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.logout,
-                      color: Colors.black,
-                      size: 16,
-                    ),
-                  ),
-                   const Text(
-                'Log out',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 12,
-                ),
-              )
-                ],
-              ),
-            ),
-          ),
+          LogoutButton(),
         ],
-      
-      
       ),
       body: Consumer<WishlistProvider>(
         builder: (context, wishlistProvider, child) {
@@ -119,9 +90,8 @@ class WishlistScreen extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0x0D000000),
+        color: cardPrimaryColor,
         borderRadius: BorderRadius.circular(12),
-        
       ),
       child: Stack(
         children: [
@@ -129,14 +99,7 @@ class WishlistScreen extends StatelessWidget {
             children: [
               GestureDetector(
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ProductDetailsScreen(
-                        productId: product.id,
-                      ),
-                    ),
-                  );
+                  context.go('/product/${product.id}');
                 },
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(8),
@@ -167,14 +130,7 @@ class WishlistScreen extends StatelessWidget {
                   padding: const EdgeInsets.only(right: 40),
                   child: GestureDetector(
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ProductDetailsScreen(
-                            productId: product.id,
-                          ),
-                        ),
-                      );
+                      context.go('/product/${product.id}');
                     },
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -195,11 +151,11 @@ class WishlistScreen extends StatelessWidget {
                           style: const TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
-                            color: Color(0xBF000000),
+                            color: Colors.black87,
                           ),
                         ),
                         const SizedBox(height: 12),
-                        // Add to cart button 
+                        // Add to cart button
                         Consumer<CartProvider>(
                           builder: (context, cartProvider, child) {
                             final isInCart = cartProvider.isInCart(product.id);
@@ -381,7 +337,7 @@ class WishlistScreen extends StatelessWidget {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text('${product.title} removed from wishlist'),
-                    backgroundColor: const Color(0xFFE57373),
+                    backgroundColor: deleteColor,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -403,70 +359,10 @@ class WishlistScreen extends StatelessWidget {
       ),
     );
   }
-
-  void _showLogoutDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          title: const Text(
-            'Log out',
-            style: TextStyle(fontWeight: FontWeight.w600),
-          ),
-          content: const Text(
-            'Are you sure you want to log out?',
-            style: TextStyle(fontSize: 16, color: Color(0xFF666666)),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text(
-                'Cancel',
-                style: TextStyle(color: Colors.grey),
-              ),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Logged out successfully'),
-                    backgroundColor: Colors.blue,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                    ),
-                    behavior: SnackBarBehavior.floating,
-                  ),
-                );
-              },
-              style: TextButton.styleFrom(
-                backgroundColor: Colors.blue,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-              ),
-              child: const Text(
-                'Log out',
-                style: TextStyle(fontWeight: FontWeight.w600),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
 }
 
-// Adapter class to make WishlistItem compatible with CartProvider
 class _WishlistItemAdapter {
   final WishlistItem _wishlistItem;
-
   _WishlistItemAdapter(this._wishlistItem);
 
   int get id => _wishlistItem.id;

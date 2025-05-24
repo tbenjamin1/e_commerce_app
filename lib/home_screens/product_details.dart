@@ -1,3 +1,4 @@
+import 'package:e_commerce_app/constants/colors.dart';
 import 'package:e_commerce_app/providers/cart_item_provider.dart';
 import 'package:e_commerce_app/providers/product_provider.dart';
 import 'package:flutter/material.dart';
@@ -31,7 +32,6 @@ class ProductDetailsScreen extends StatelessWidget {
               ),
             );
           }
-
           final isFavorite = productProvider.isFavorite(product.id);
           final isInCart = cartProvider.isInCart(product.id);
           final cartQuantity = cartProvider.getQuantity(product.id);
@@ -49,7 +49,7 @@ class ProductDetailsScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: IconButton(
-                    onPressed: () => Navigator.pop(context),
+                    onPressed: () => context.go('/home'),
                     icon: const Icon(
                       Icons.arrow_back,
                       color: Colors.black,
@@ -236,13 +236,11 @@ class ProductDetailsScreen extends StatelessWidget {
               .firstOrNull;
 
           if (product == null) return const SizedBox.shrink();
-
           final isInCart = cartProvider.isInCart(product.id);
-
           return Container(
             padding: const EdgeInsets.fromLTRB(24, 20, 24, 24),
             decoration: BoxDecoration(
-              color: Color(0xFFFFE8B2),
+              color: bottomprimaryColor,
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.08),
@@ -300,7 +298,7 @@ class ProductDetailsScreen extends StatelessWidget {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: isInCart
                               ? const Color(0xFF4CAF50)
-                              : const Color(0xFF2C2C2C),
+                              : primarybuttonColor,
                           foregroundColor: Colors.white,
                           elevation: 0,
                           shape: RoundedRectangleBorder(
@@ -387,7 +385,7 @@ class ProductDetailsScreen extends StatelessWidget {
                 context.go('/cart');
               },
               style: TextButton.styleFrom(
-                backgroundColor: const Color(0xFF2C2C2C),
+                backgroundColor: primarybuttonColor,
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),

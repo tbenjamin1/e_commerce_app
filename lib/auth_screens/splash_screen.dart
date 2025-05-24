@@ -1,3 +1,4 @@
+import 'package:e_commerce_app/constants/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'dart:async';
@@ -92,7 +93,7 @@ class _SplashScreenState extends State<SplashScreen> {
                       context.go('/login');
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFF2C2C2C),
+                      backgroundColor: primarybuttonColor,
                       foregroundColor: Colors.white,
                       elevation: 8,
                       shadowColor: Colors.black.withOpacity(0.3),

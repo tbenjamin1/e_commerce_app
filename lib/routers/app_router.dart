@@ -34,7 +34,7 @@ class AppRouter {
           return ProductListingScreen(currentUser: currentUser);
         },
       ),
-      
+
       // Product Details Route
       GoRoute(
         path: '/product/:id',

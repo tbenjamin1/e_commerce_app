@@ -1,48 +1,12 @@
 // providers/wishlist_provider.dart
 import 'dart:convert';
+import 'package:e_commerce_app/models/product_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class WishlistItem {
-  final int id;
-  final String title;
-  final double price;
-  final String image;
-  final String category;
-
-  WishlistItem({
-    required this.id,
-    required this.title,
-    required this.price,
-    required this.image,
-    required this.category,
-  });
-
-  // Convert to JSON for storage
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'title': title,
-      'price': price,
-      'image': image,
-      'category': category,
-    };
-  }
-
-  // Create from JSON
-  factory WishlistItem.fromJson(Map<String, dynamic> json) {
-    return WishlistItem(
-      id: json['id'],
-      title: json['title'],
-      price: json['price'].toDouble(),
-      image: json['image'],
-      category: json['category'],
-    );
-  }
-}
 
 class WishlistProvider with ChangeNotifier {
-  List<WishlistItem> _wishlistItems = [];
+  List<WishlistItem > _wishlistItems = [];
   static const String _wishlistKey = 'wishlist_items';
 
   List<WishlistItem> get wishlistItems => _wishlistItems;

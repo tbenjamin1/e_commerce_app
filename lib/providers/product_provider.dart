@@ -1,57 +1,14 @@
+import 'package:e_commerce_app/constants/api_urls.dart';
+import 'package:e_commerce_app/models/product_model.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-// Product model
-class Product {
-  final int id;
-  final String title;
-  final double price;
-  final String description;
-  final String category;
-  final String image;
-  final Rating rating;
 
-  Product({
-    required this.id,
-    required this.title,
-    required this.price,
-    required this.description,
-    required this.category,
-    required this.image,
-    required this.rating,
-  });
-
-  factory Product.fromJson(Map<String, dynamic> json) {
-    return Product(
-      id: json['id'],
-      title: json['title'],
-      price: json['price'].toDouble(),
-      description: json['description'],
-      category: json['category'],
-      image: json['image'],
-      rating: Rating.fromJson(json['rating']),
-    );
-  }
-}
-
-class Rating {
-  final double rate;
-  final int count;
-
-  Rating({required this.rate, required this.count});
-
-  factory Rating.fromJson(Map<String, dynamic> json) {
-    return Rating(
-      rate: json['rate'].toDouble(),
-      count: json['count'],
-    );
-  }
-}
 
 // Product Provider for state management
 class ProductProvider extends ChangeNotifier {
-  List<Product> _products = [];
+  List<Product > _products = [];
   Set<int> _favoriteProducts = {};
   bool _isLoading = false;
   bool _hasMore = true;
@@ -79,7 +36,7 @@ class ProductProvider extends ChangeNotifier {
 
     try {
       final response = await http.get(
-        Uri.parse('https://fakestoreapi.com/products'),
+        Uri.parse('${baseUrl}/products'),
       );
 
       if (response.statusCode == 200) {

@@ -1,12 +1,12 @@
-import 'package:e_commerce_app/home_screens/product_details.dart';
+import 'package:e_commerce_app/constants/colors.dart';
 import 'package:e_commerce_app/layout/bottom_navigation_bar.dart';
 import 'package:e_commerce_app/providers/product_provider.dart';
 import 'package:e_commerce_app/providers/wishlist_provider.dart';
+import 'package:e_commerce_app/widgets/logout.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-// Main Product Listing Screen using Provider
 class ProductListingScreen extends StatefulWidget {
   final String currentUser;
   const ProductListingScreen({required this.currentUser, Key? key})
@@ -94,7 +94,6 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
             ),
             Text(
               'Username',
-              // widget.currentUser,
               style: const TextStyle(
                 fontSize: 18,
                 color: Colors.black,
@@ -104,30 +103,7 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
           ],
         ),
         actions: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: const BoxDecoration(
-                  color: Color(0xFFFFE8B2),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.logout,
-                  color: Colors.black,
-                  size: 20,
-                ),
-              ),
-              const Text(
-                'Log out',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 12,
-                ),
-              ),
-            ],
-          ),
+          LogoutButton(),
           const SizedBox(width: 16),
         ],
       ),
@@ -178,7 +154,6 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
                   itemCount: productProvider.products.length +
                       (productProvider.hasMore ? 1 : 0),
                   itemBuilder: (context, index) {
-                    // Show loading indicator at the end for pagination
                     if (index == productProvider.products.length) {
                       return const Padding(
                         padding: EdgeInsets.all(16.0),
@@ -198,7 +173,7 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
                           margin: const EdgeInsets.only(bottom: 16),
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: const Color(0x0D000000),
+                            color: cardPrimaryColor,
                             borderRadius: BorderRadius.circular(12),
                             boxShadow: [
                               BoxShadow(
@@ -213,7 +188,6 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
                             children: [
                               Row(
                                 children: [
-                                  // Product Image
                                   Container(
                                     width: 80,
                                     height: 80,
@@ -318,7 +292,7 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
                                   ),
                                 ],
                               ),
-                              // Wishlist Button positioned at top-right
+                              // Wishlist Button
                               Positioned(
                                 top: 0,
                                 right: 0,
@@ -332,7 +306,6 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
                                       category: product.category,
                                     );
 
-                                    // Show feedback to user
                                     final isNowInWishlist = wishlistProvider
                                         .isInWishlist(product.id);
                                     _showWishlistSnackBar(
