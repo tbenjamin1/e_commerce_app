@@ -1,10 +1,8 @@
-import 'package:e_commerce_app/constants/api_urls.dart';
 import 'package:e_commerce_app/constants/colors.dart';
-import 'package:e_commerce_app/home_screens/ProductListingScreen.dart';
+import 'package:e_commerce_app/providers/user_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -16,39 +14,37 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _username = TextEditingController();
   final TextEditingController _password = TextEditingController();
   bool _obscurePassword = true;
-  bool _isLoading = false;
 
-  Future<void> login() async {
+  @override
+  void dispose() {
+    _username.dispose();
+    _password.dispose();
+    super.dispose();
+  }
+
+  Future<void> _handleLogin() async {
     if (!_formKey.currentState!.validate()) return;
 
-    setState(() {
-      _isLoading = true;
-    });
-
-    final userCredentials = {
-      'username': _username.text.trim(),
-      'password': _password.text.trim(),
-    };
-
-    final response = await http.post(
-      Uri.parse('${baseUrl}/users'),
-      headers: {'Content-Type': 'application/json'},
-      body: json.encode(userCredentials),
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    
+    final success = await userProvider.login(
+      _username.text.trim(),
+      _password.text.trim(),
     );
 
-    setState(() {
-      _isLoading = false;
-    });
-
-    print(response.body);
-    print(response.statusCode);
-
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      context.go('/home?currentUser=${data['id'].toString()}');
-    } else {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Invalid login credentials')));
+    if (success && mounted) {
+      // Navigate to home screen on successful login
+      context.go('/home');
+    } else if (mounted) {
+      // Show error message
+      final errorMessage = userProvider.errorMessage ?? 'Login failed';
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(errorMessage),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
     }
   }
 
@@ -130,8 +126,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 TextFormField(
                   controller: _username,
                   decoration: buildInputDecoration('Enter your username'),
-                  validator: (value) =>
-                      value!.isEmpty ? 'Enter username' : null,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your username';
+                    }
+                    return null;
+                  },
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
@@ -150,42 +150,54 @@ class _LoginScreenState extends State<LoginScreen> {
                           () => _obscurePassword = !_obscurePassword),
                     ),
                   ),
-                  validator: (value) =>
-                      value!.isEmpty ? 'Enter password' : null,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your password';
+                    }
+                    if (value.length < 6) {
+                      return 'Password must be at least 6 characters';
+                    }
+                    return null;
+                  },
                 ),
                 const SizedBox(height: 30),
-                SizedBox(
-                  width: double.infinity,
-                  height: 56,
-                  child: ElevatedButton(
-                    onPressed: _isLoading ? null : login,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: primarybuttonColor,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      elevation: 0,
-                    ),
-                    child: _isLoading
-                        ? const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              valueColor:
-                                  AlwaysStoppedAnimation<Color>(Colors.white),
-                            ),
-                          )
-                        : const Text(
-                            'Login',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
+                Consumer<UserProvider>(
+                  builder: (context, userProvider, child) {
+                    return SizedBox(
+                      width: double.infinity,
+                      height: 56,
+                      child: ElevatedButton(
+                        onPressed: userProvider.isLoading ? null : _handleLogin,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: primarybuttonColor,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
                           ),
-                  ),
+                          elevation: 0,
+                        ),
+                        child: userProvider.isLoading
+                            ? const SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.white),
+                                ),
+                              )
+                            : const Text(
+                                'Login',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                      ),
+                    );
+                  },
                 ),
+                
               ],
             ),
           ),

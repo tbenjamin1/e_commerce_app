@@ -1,11 +1,7 @@
-
-
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:e_commerce_app/models/product_model.dart';
-
-
 
 class CartProvider with ChangeNotifier {
   List<CartItem> _cartItems = [];
@@ -13,24 +9,21 @@ class CartProvider with ChangeNotifier {
 
   List<CartItem> get cartItems => _cartItems;
 
-  // Get total number of items in cart
   int get totalItems {
     return _cartItems.fold(0, (sum, item) => sum + item.quantity);
   }
 
-  // Get total price of all items in cart
   double get totalPrice {
     return _cartItems.fold(0.0, (sum, item) => sum + item.totalPrice);
   }
 
-  // Check if product is in cart
   bool isInCart(int productId) {
     return _cartItems.any((item) => item.productId == productId);
   }
 
-  // Get quantity of specific product in cart
   int getQuantity(int productId) {
-    final item = _cartItems.where((item) => item.productId == productId).firstOrNull;
+    final item =
+        _cartItems.where((item) => item.productId == productId).firstOrNull;
     return item?.quantity ?? 0;
   }
 
@@ -39,7 +32,7 @@ class CartProvider with ChangeNotifier {
     try {
       final prefs = await SharedPreferences.getInstance();
       final cartJson = prefs.getString(_cartKey);
-      
+
       if (cartJson != null) {
         final List<dynamic> cartList = json.decode(cartJson);
         _cartItems = cartList.map((json) => CartItem.fromJson(json)).toList();
@@ -54,7 +47,8 @@ class CartProvider with ChangeNotifier {
   Future<void> _saveCart() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final cartJson = json.encode(_cartItems.map((item) => item.toJson()).toList());
+      final cartJson =
+          json.encode(_cartItems.map((item) => item.toJson()).toList());
       await prefs.setString(_cartKey, cartJson);
     } catch (e) {
       print('Error saving cart: $e');
@@ -63,15 +57,14 @@ class CartProvider with ChangeNotifier {
 
   // Add product to cart - accepts any object with required properties
   Future<void> addToCart(dynamic product, {int quantity = 1}) async {
-    final existingIndex = _cartItems.indexWhere((item) => item.productId == product.id);
-    
+    final existingIndex =
+        _cartItems.indexWhere((item) => item.productId == product.id);
+
     if (existingIndex >= 0) {
-      // Product already exists, update quantity
       _cartItems[existingIndex] = _cartItems[existingIndex].copyWith(
         quantity: _cartItems[existingIndex].quantity + quantity,
       );
     } else {
-      // Add new product to cart
       _cartItems.add(CartItem(
         productId: product.id,
         title: product.title,
@@ -81,7 +74,7 @@ class CartProvider with ChangeNotifier {
         quantity: quantity,
       ));
     }
-    
+
     await _saveCart();
     notifyListeners();
   }
@@ -153,7 +146,6 @@ class CartProvider with ChangeNotifier {
   }
 }
 
-// Extension for null safety
 extension ListExtension<T> on List<T> {
   T? get firstOrNull => isEmpty ? null : first;
 }

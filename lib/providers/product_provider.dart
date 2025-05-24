@@ -57,7 +57,7 @@ class ProductProvider extends ChangeNotifier {
     }
   }
 
-  // Load more products (pagination)
+  // Load more products 
   Future<void> loadMoreProducts() async {
     if (_isLoading || !_hasMore) return;
 
@@ -65,7 +65,7 @@ class ProductProvider extends ChangeNotifier {
 
     try {
       final response = await http.get(
-        Uri.parse('https://fakestoreapi.com/products'),
+        Uri.parse('${baseUrl}/products'),
       );
 
       if (response.statusCode == 200) {
