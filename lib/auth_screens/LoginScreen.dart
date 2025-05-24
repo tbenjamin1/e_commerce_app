@@ -1,7 +1,10 @@
+import 'package:e_commerce_app/constants/api_urls.dart';
+import 'package:e_commerce_app/constants/colors.dart';
 import 'package:e_commerce_app/home_screens/ProductListingScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:go_router/go_router.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -26,9 +29,9 @@ class _LoginScreenState extends State<LoginScreen> {
       'username': _username.text.trim(),
       'password': _password.text.trim(),
     };
-    //  login
+
     final response = await http.post(
-      Uri.parse('https://fakestoreapi.com/users'),
+      Uri.parse('${baseUrl}/users'),
       headers: {'Content-Type': 'application/json'},
       body: json.encode(userCredentials),
     );
@@ -42,14 +45,42 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
-      
-
-      Navigator.pushReplacement(context,
-          MaterialPageRoute(builder: (_) => ProductListingScreen(currentUser: data['id'].toString() )));
+      context.go('/home?currentUser=${data['id'].toString()}');
     } else {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text('Invalid login credentials')));
     }
+  }
+
+  InputDecoration buildInputDecoration(String hintText, {Widget? suffixIcon}) {
+    return InputDecoration(
+      hintText: hintText,
+      hintStyle: TextStyle(color: Colors.grey),
+      contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+      filled: true,
+      fillColor: Colors.grey[100],
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: Colors.grey.shade300),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: Colors.grey.shade300),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: Colors.black, width: 1.5),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: Colors.red, width: 1.5),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: Colors.red, width: 1.5),
+      ),
+      suffixIcon: suffixIcon,
+    );
   }
 
   @override
@@ -65,20 +96,19 @@ class _LoginScreenState extends State<LoginScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 20),
-                // Back button
                 Container(
                   decoration: BoxDecoration(
-                    color: Colors.grey[100],
+                    color: Colors.white,
                     borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.grey.shade300),
                   ),
                   child: IconButton(
                     icon: const Icon(Icons.arrow_back_ios_new,
                         color: Colors.black),
-                    onPressed: () => Navigator.pop(context),
+                    onPressed: () => context.go('/'),
                   ),
                 ),
                 const SizedBox(height: 60),
-                // Welcome text
                 RichText(
                   text: const TextSpan(
                     style: TextStyle(
@@ -97,72 +127,40 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 const SizedBox(height: 50),
-                // Username field
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.grey[100],
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: TextFormField(
-                    controller: _username,
-                    decoration: const InputDecoration(
-                      hintText: 'Enter your username',
-                      hintStyle: TextStyle(color: Colors.grey),
-                      border: InputBorder.none,
-                      contentPadding: EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 18,
-                      ),
-                    ),
-                    validator: (value) =>
-                        value!.isEmpty ? 'Enter username' : null,
-                  ),
+                TextFormField(
+                  controller: _username,
+                  decoration: buildInputDecoration('Enter your username'),
+                  validator: (value) =>
+                      value!.isEmpty ? 'Enter username' : null,
                 ),
                 const SizedBox(height: 16),
-                // Password field
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.grey[100],
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: TextFormField(
-                    controller: _password,
-                    obscureText: _obscurePassword,
-                    decoration: InputDecoration(
-                      hintText: 'Enter your password',
-                      hintStyle: const TextStyle(color: Colors.grey),
-                      border: InputBorder.none,
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 18,
+                TextFormField(
+                  controller: _password,
+                  obscureText: _obscurePassword,
+                  decoration: buildInputDecoration(
+                    'Enter your password',
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _obscurePassword
+                            ? Icons.visibility_off_outlined
+                            : Icons.visibility_outlined,
+                        color: Colors.black,
                       ),
-                      suffixIcon: Padding(
-                        padding: const EdgeInsets.only(right: 8.0),
-                        child: IconButton(
-                          icon: Icon(
-                            _obscurePassword
-                                ? Icons.visibility_off_outlined
-                                : Icons.visibility_outlined,
-                            color: Colors.black,
-                          ),
-                          onPressed: () => setState(
-                              () => _obscurePassword = !_obscurePassword),
-                        ),
-                      ),
+                      onPressed: () => setState(
+                          () => _obscurePassword = !_obscurePassword),
                     ),
-                    validator: (value) =>
-                        value!.isEmpty ? 'Enter password' : null,
                   ),
+                  validator: (value) =>
+                      value!.isEmpty ? 'Enter password' : null,
                 ),
                 const SizedBox(height: 30),
-                // Login button
                 SizedBox(
                   width: double.infinity,
                   height: 56,
                   child: ElevatedButton(
                     onPressed: _isLoading ? null : login,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black,
+                      backgroundColor: primarybuttonColor,
                       foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
